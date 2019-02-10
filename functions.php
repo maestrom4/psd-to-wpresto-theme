@@ -73,18 +73,75 @@
  /**
   * Custom Post type for Menus
   */
-function wprest_menus() {
+function wpresto_menus() {
 	register_post_type(
 		'wpresto_menu_list',
 		array(
-			'labels'    => array(
+			'labels'      => array(
 				'name'		     => __( 'Resto Menu', 'wpresto' ),
 				'singular_name'  => __( 'Menu', 'wpresto' )
 			),
 			'public'      => true,
 			'has_archive' => true,
-			'supports'    => array( 'title', 'editor', 'custom-fields', 'thumbnail')
+			'supports'    => array( 'title', 'editor', 'thumbnail')
 		)
 	);
 }
-add_action( 'init', 'wprest_menus' );
+add_action( 'init', 'wpresto_menus' );
+/**
+ * Metabox for Menus
+ */
+function wporg_add_custom_box()
+{
+	add_meta_box(
+		'wporg_box_id',           // Unique ID
+		'Menu Price',             // Box title
+		'wporg_custom_box_html',  // Content callback, must be of type callable
+		'wpresto_menu_list',      // Post type
+		'side'
+	);
+}
+add_action('add_meta_boxes', 'wporg_add_custom_box');
+
+// HTML Design
+function wporg_custom_box_html($post)
+{
+    ?>
+    <label for="price">Price</label>
+	<?php
+	global $post;
+	$price = get_post_meta( $post->ID, '_wporg_meta_key', true );
+	echo '<input type="number" name="price" pattern="^\d*(\.\d{0,2})?$" value="' . $price . '" class="widefat"> ';
+}
+// Save to post
+function wporg_save_postdata($post_id)
+{
+    if (array_key_exists('price', $_POST)) {
+        update_post_meta(
+            $post_id,
+            '_wporg_meta_key',
+            $_POST['price']
+        );
+    }
+}
+add_action('save_post', 'wporg_save_postdata');
+
+// End of Menu
+
+
+function wpresto_featured_posts() {
+	register_post_type(
+		'wpresto_menu',
+		array(
+			'labels'      => array(
+				'name'           => __( 'Featured Menu', 'wpresto' ),
+				'singular'       => __( 'Featured Menu', 'wpresto')
+			),
+			'public'      => true,
+			'has_archive' => true,
+			'supports'    => array( 'title', 'editor', 'custom-fields', 'thumbnail', 'page-attributes' )
+		)
+	);
+}
+add_action( 'init', 'wpresto_featured_posts' );
+
