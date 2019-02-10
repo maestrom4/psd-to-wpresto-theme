@@ -69,3 +69,22 @@
  function my_filter_head() {
    remove_action('wp_head', '_admin_bar_bump_cb');
  }
+
+ /**
+  * Custom Post type for Menus
+  */
+function wprest_menus() {
+	register_post_type(
+		'wpresto_menu_list',
+		array(
+			'labels'    => array(
+				'name'		     => __( 'Resto Menu', 'wpresto' ),
+				'singular_name'  => __( 'Menu', 'wpresto' )
+			),
+			'public'      => true,
+			'has_archive' => true,
+			'supports'    => array( 'title', 'editor', 'custom-fields', 'thumbnail')
+		)
+	);
+}
+add_action( 'init', 'wprest_menus' );
